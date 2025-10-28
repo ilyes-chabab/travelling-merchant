@@ -1,6 +1,8 @@
 from utils.graph_tools import load_cities, build_distance_matrix
 from algo.christofides import christofides_tsp
 from algo.genetic_tsp import genetic_tsp
+from visualisation_pygame import TSPVisualizer
+import time
 
 def main():
     # -------------------------
@@ -22,7 +24,9 @@ def main():
     # 3️⃣ Résolution TSP : Christofides
     # -------------------------
     print("\n=== Algorithme de Christofides ===")
+    start = time.time()
     path_c, dist_c = christofides_tsp(distance_matrix)
+    exec_time_christofides = time.time() - start
     print("Chemin Christofides :", path_c)
     print(f"Distance totale Christofides : {dist_c:.2f} km")
 
@@ -30,12 +34,14 @@ def main():
     # 4️⃣ Résolution TSP : Algorithme génétique
     # -------------------------
     print("\n=== Algorithme Génétique ===")
+    start = time.time()
     path_g, dist_g = genetic_tsp(
         distance_matrix,
         pop_size=100,
         generations=500,
         mutation_rate=0.05
     )
+    exec_time_genetic = time.time() - start
     print("Chemin Génétique :", path_g)
     print(f"Distance totale Génétique : {dist_g:.2f} km")
 
@@ -45,6 +51,14 @@ def main():
     print("\n=== Comparaison des méthodes ===")
     print(f"Christofides : {dist_c:.2f} km")
     print(f"Génétique    : {dist_g:.2f} km")
+
+    visualizer = TSPVisualizer(
+    cities,
+    path_c, path_g,
+    dist_c, dist_g,
+    exec_time_christofides, exec_time_genetic
+    )
+    visualizer.run()
 
 if __name__ == "__main__":
     main()
