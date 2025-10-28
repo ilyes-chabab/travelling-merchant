@@ -1,0 +1,71 @@
+import random
+
+def genetic_tsp(distance_matrix, pop_size=100, generations=500, mutation_rate=0.05):
+    """
+    Résout le TSP par algorithme génétique.
+    distance_matrix : numpy array NxN
+    pop_size : taille de la population
+    generations : nombre de générations
+    mutation_rate : probabilité de mutation
+    Retour :
+        best_path : meilleur parcours trouvé
+        best_distance : distance totale
+    """
+    n = len(distance_matrix)
+
+    # --- 1️⃣ Population initiale ---
+    population = [random.sample(range(n), n) for _ in range(pop_size)]
+
+    def fitness(path):
+        """Distance totale d'un chemin"""
+        return sum(distance_matrix[path[i]][path[i+1]] for i in range(n-1)) + distance_matrix[path[-1]][path[0]]
+
+    # --- 2️⃣ Boucle de générations ---
+    for gen in range(generations):
+        # Calcul des fitness et tri
+        scores = [(fitness(ind), ind) for ind in population]
+        scores.sort(key=lambda x: x[0])  # plus petit score = meilleur
+
+        # Garde les meilleurs
+        population = [ind for _, ind in scores[:pop_size//2]]
+
+        # --- 3️⃣ Crossover ---
+        children = []
+        while len(children) + len(population) < pop_size:
+            parent1, parent2 = random.sample(population, 2)
+            start, end = sorted(random.sample(range(n), 2))
+            child = [-1]*n
+            child[start:end] = parent1[start:end]
+            pointer = 0
+            for city in parent2:
+                if city not in child:
+                    while child[pointer] != -1:
+                        pointer += 1
+                    child[pointer] = city
+            children.append(child)
+        population += children
+
+        # --- 4️⃣ Mutation ---
+        for ind in population:
+            if random.random() < mutation_rate:
+                i, j = random.sample(range(n), 2)
+                ind[i], ind[j] = ind[j], ind[i]
+
+    # --- 5️⃣ Meilleur individu ---
+    best_path = min(population, key=fitness)
+    best_distance = fitness(best_path)
+    return best_path, best_distance
+
+
+# -------------------------
+# Test rapide avec graph_tools
+# -------------------------
+if __name__ == "__main__":
+    from utils.graph_tools import load_cities, build_distance_matrix
+
+    cities = load_cities("data/villes_france_lat_long.csv")
+    distance_matrix = build_distance_matrix(cities)
+
+    path, dist_tot = genetic_tsp(distance_matrix, pop_size=50, generations=200, mutation_rate=0.1)
+    print("Meilleur chemin trouvé :", path)
+    print("Distance totale :", dist_tot)
