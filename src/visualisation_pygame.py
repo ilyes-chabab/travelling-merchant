@@ -51,16 +51,20 @@ def draw_path(screen, cities, path, color=(0, 0, 255)):
 # ------------------------------
 
 class TSPVisualizer:
-    def __init__(self, cities, path_christofides, path_genetic,
-                 dist_c, dist_g, exec_c, exec_g, geojson_path="data/france.geojson"):
+    def __init__(self, cities, path_c, path_g,
+                 dist_c, dist_g, exec_time_christofides, exec_time_genetic,
+                 mem_usage_christofides, mem_usage_genetic,
+                 geojson_path="data/france.geojson"):
         pygame.init()
         self.cities = cities
-        self.path_c = path_christofides
-        self.path_g = path_genetic
+        self.path_c = path_c
+        self.path_g = path_g
         self.dist_c = dist_c
         self.dist_g = dist_g
-        self.exec_c = exec_c
-        self.exec_g = exec_g
+        self.exec_c = exec_time_christofides
+        self.exec_g = exec_time_genetic
+        self.mem_c = mem_usage_christofides
+        self.mem_g = mem_usage_genetic
         self.active_path = None
         self.polygons = load_france_polygon(geojson_path)
 
@@ -117,8 +121,8 @@ class TSPVisualizer:
             path = self.path_g
         elif self.active_path == "compare":
             lines = [
-                f"Christofides : {self.dist_c:.2f} km ({self.exec_c:.3f} s)",
-                f"Génétique : {self.dist_g:.2f} km ({self.exec_g:.3f} s)"
+                f"Christofides : {self.dist_c:.2f} km ({self.exec_c:.3f} s| {self.mem_c:.2f} Mo)",
+                f"Génétique : {self.dist_g:.2f} km ({self.exec_g:.3f} s | {self.mem_g:.2f} Mo)"
             ]
             path = self.path_c
         else:
