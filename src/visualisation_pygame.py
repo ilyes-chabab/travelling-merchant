@@ -65,8 +65,12 @@ class TSPVisualizer:
         self.polygons = load_france_polygon(geojson_path)
 
         # Fenêtre
-        self.width, self.height = 1000, 950
-        self.screen = pygame.display.set_mode((self.width, self.height))
+        info = pygame.display.Info()
+        self.width, self.height = info.current_w, info.current_h
+        self.screen = pygame.display.set_mode((self.width, self.height), pygame.RESIZABLE)
+
+        # self.width, self.height = 800, 550
+        # self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption("Voyageur de Commerce")
         self.clock = pygame.time.Clock()
 
@@ -117,8 +121,8 @@ class TSPVisualizer:
             path = self.path_g
         elif self.active_path == "compare":
             lines = [
-                f"Christofides : {self.dist_c:.2f} km ({self.exec_c:.3f} s)",
-                f"Génétique : {self.dist_g:.2f} km ({self.exec_g:.3f} s)"
+                f"Christofides (bleu) : {self.dist_c:.2f} km ({self.exec_c:.3f} s)",
+                f"Génétique (orange) : {self.dist_g:.2f} km ({self.exec_g:.3f} s)"
             ]
             path = self.path_c
         else:
