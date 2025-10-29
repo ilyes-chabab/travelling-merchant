@@ -1,6 +1,6 @@
 import random
 
-def genetic_tsp(distance_matrix, pop_size=100, generations=500, mutation_rate=0.05):
+def genetic_tsp(distance_matrix, pop_size=100, generations=50000, mutation_rate=0.05):
     """
     Résout le TSP par algorithme génétique.
     distance_matrix : numpy array NxN
