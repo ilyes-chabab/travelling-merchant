@@ -69,7 +69,7 @@ class TSPVisualizer:
         self.polygons = load_france_polygon(geojson_path)
 
         # Fenêtre
-        self.width, self.height = 800, 550
+        self.width, self.height = 1000, 950
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption("Voyageur de Commerce")
         self.clock = pygame.time.Clock()
