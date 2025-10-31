@@ -13,7 +13,8 @@ def genetic_tsp(distance_matrix, pop_size=100, generations=50000, mutation_rate=
     """
     n = len(distance_matrix)
 
-    # --- 1️⃣ Population initiale ---
+    # --- Population initiale ---
+    # Plein de listes aléatoires
     population = [random.sample(range(n), n) for _ in range(pop_size)]
 
     def fitness(path):
@@ -26,10 +27,14 @@ def genetic_tsp(distance_matrix, pop_size=100, generations=50000, mutation_rate=
         scores = [(fitness(ind), ind) for ind in population]
         scores.sort(key=lambda x: x[0])  # plus petit score = meilleur
 
-        # Garde les meilleurs
+        # Garde les meilleurs 50%
         population = [ind for _, ind in scores[:pop_size//2]]
 
         # --- 3️⃣ Crossover ---
+        # parent1 et parent2 → deux bons chemins sélectionnés.
+        # On copie un segment de parent1 dans child.
+        # Puis on remplit le reste avec les villes manquantes dans l’ordre de parent2.
+        
         children = []
         while len(children) + len(population) < pop_size:
             parent1, parent2 = random.sample(population, 2)
@@ -44,8 +49,17 @@ def genetic_tsp(distance_matrix, pop_size=100, generations=50000, mutation_rate=
                     child[pointer] = city
             children.append(child)
         population += children
+        
+        
+        #parent1 = [A, B, C, D, E, F]
+        #parent2 = [C, D, F, E, B, A]
+        #start, end = (2, 4)
+        #→ child = [-1, -1, C, D, -1, -1]
+        #→ on remplit avec parent2 sans répéter : [C, D, F, E, B, A]
+        #→ child = [F, E, C, D, B, A]
 
         # --- 4️⃣ Mutation ---
+        #échange 2 villes avec une proba 
         for ind in population:
             if random.random() < mutation_rate:
                 i, j = random.sample(range(n), 2)
